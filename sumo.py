@@ -13,7 +13,7 @@ import pandas as pd
 import names
 import romkan
 
-last_number = '587' #change the number
+last_number = '603' #change the number
 
 def requests_data(n):
     # requests bansuke json from website
@@ -22,9 +22,11 @@ def requests_data(n):
     domain = 'http://www.sumo.or.jp'
     url = 'http://www.sumo.or.jp/ResultBanzuke/table_ajax/{}/1'.format(n) #/1/1 /2/1
     payload = {'kakuzuke_id': n, #1 or 2
-               'basho_id':last_number, 
+               'basho_id':last_number,
                'page':'1'}
-    headers = {'X-Requested-With': 'XMLHttpRequest'}
+    headers = {'X-Requested-With': 'XMLHttpRequest',
+               'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36',
+    }
     r = requests.post(url, data = payload, headers=headers)
     r = json.loads(r.text)
     return r
@@ -56,15 +58,18 @@ def extract_people(r):
 
 def update_image(contest):
     images = os.listdir("img")
+    headers = {'X-Requested-With': 'XMLHttpRequest',
+               'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36',
+    }
 
     # Downloads the images
     for row in contest:
-        for i in [0,2]: 
+        for i in [0,2]:
             url = "http://sumo.or.jp/img/sumo_data/rikishi/60x60/" + row[i]['img']
             # url = domain + row[i]['img']
             name = os.path.basename(url)
             if name and name not in images: # check if already downloaded
-                response = requests.get(url)
+                response = requests.get(url, headers=headers)
                 if response.status_code == 200:
                     f = open("img/" + name, 'wb')
                     f.write(response.content)
@@ -154,7 +159,7 @@ def write_docx(contest, month, banzuke_type):
 
 if __name__ == "__main__":
     r = requests_data(1)
-    month = r['year_jp'] + r['basho_name']
+    month = r['BashoInfo']['year_jp'] + r['BashoInfo']['basho_name']
     banzuke_type = r['Kakuzuke']
     contest = extract_people(r)
     update_image(contest)

@@ -1,0 +1,6 @@
+img/*
+docx/*
+pdf/*
+docx_test/*
+.DS_Store
+__pycache__/*
