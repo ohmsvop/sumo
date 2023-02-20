@@ -20,7 +20,7 @@ def requests_data(n):
     # n = 1: 幕內,  n = 2: 十兩
     n = str(n)
     domain = 'http://www.sumo.or.jp'
-    url = 'http://www.sumo.or.jp/ResultBanzuke/table_ajax/{}/1'.format(n) #/1/1 /2/1
+    url = 'http://www.sumo.or.jp/ResultBanzuke/tableAjax/{}/1'.format(n) #/1/1 /2/1
     payload = {'kakuzuke_id': n, #1 or 2
                'basho_id':last_number,
                'page':'1'}
